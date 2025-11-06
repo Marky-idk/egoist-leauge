@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egoist League - Final Mockup</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /************************************************************
+        /* 1. VARIABLES AND BASE STYLES
+        /************************************************************/
+
+        :root {
+            /* Colors */
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1e1e1e;
+            --accent-neon: #00ffc8;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --highlight-color: #00e0ff;
+            
+            /* Font */
+            --font-primary: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Base Reset and Global Styles */
+        body {
+            font-family: var(--font-primary);
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* General utility classes */
+        .text-muted { color: var(--text-muted); opacity: 0.8; }
+        .accent-link { color: var(--accent-neon); text-decoration: none; font-weight: bold; transition: color 0.3s; }
+        .accent-link:hover { color: var(--highlight-color); }
+        .accent-text { color: var(--accent-neon); }
+
+        /************************************************************
+        /* 2. LOADING SCREEN STYLES (UNIQUE)
+        /************************************************************/
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-dark);
+            z-index: 1000; /* Ensure it covers everything */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+        }
+
+        /* Animation for the loading screen logo */
+        @keyframes logoPulse {
+            0% { 
+                opacity: 0.6;
+                filter: drop-shadow(0 0 5px var(--accent-neon));
+            }
+            50% { 
+                opacity: 1;
+                filter: drop-shadow(0 0 15px var(--accent-neon));
+            }
+            100% { 
+                opacity: 0.6;
+                filter: drop-shadow(0 0 5px var(--accent-neon));
+            }
+        }
+        
+        #loading-screen img {
+            max-width: 80%;
+            height: auto;
+            max-height: 200px; /* **INCREASED SIZE** */
+            /* Apply the neon pulsing effect */
+            animation: logoPulse 2s infinite ease-in-out;
+        }
+
+        /* Class added by JS to hide the screen after loading */
+        .slideUpFadeOut {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        /************************************************************
+        /* 3. CORE ANIMATION & ENTRANCE EFFECTS
+        /************************************************************/
+
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes subtlePulse {
+            0% { box-shadow: 0 0 2px 0 var(--accent-neon); }
+            50% { box-shadow: 0 0 4px 1px var(--accent-neon); }
+            100% { box-shadow: 0 0 2px 0 var(--accent-neon); }
+        }
+
+
+        section, .hero-content {
+            opacity: 0;
+            animation: fadeInSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            margin-bottom: 60px;
+            padding: 0;
+        }
+
+        /* Stagger the section animations */
+        .hero-content { animation-delay: 0.2s; }
+        section:nth-of-type(1) { animation-delay: 0.4s; }
+        section:nth-of-type(2) { animation-delay: 0.6s; }
+        section:nth-of-type(3) { animation-delay: 0.8s; }
+        section:nth-of-type(4) { animation-delay: 1.0s; }
+        section:nth-of-type(5) { animation-delay: 1.2s; }
+
+        /************************************************************
+        /* 4. HEADER AND HERO SECTION
+        /************************************************************/
+
+        header {
+            background-color: var(--primary-dark);
+            border-bottom: 1px solid var(--secondary-dark);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* LOGO STYLES UPDATED FOR IMAGE */
+        .logo { 
+            font-size: 0; 
+            height: 100px; /* **INCREASED SIZE** */
+        }
+        .logo img {
+            max-height: 100%; 
+            width: auto;
+            display: block;
+        }
+        
+        nav a { color: var(--text-light); text-decoration: none; margin: 0 20px; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-neon); }
+
+        .hero {
+            background-color: var(--primary-dark);
+            text-align: center;
+            padding: 180px 20px 120px;
+            border-bottom: 3px solid var(--accent-neon);
+        }
+
+        .hero h1 {
+            font-size: 5.5em; margin-bottom: 15px; letter-spacing: 5px;
+            color: var(--text-light); text-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+            text-transform: uppercase;
+        }
+
+        .hero p { font-size: 1.4em; font-weight: 300; color: var(--accent-neon); }
+
+        .cta-button {
+            display: inline-block; background-color: var(--accent-neon); color: var(--primary-dark);
+            padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold;
+            margin-top: 40px; transition: all 0.3s ease; box-shadow: 0 0 15px var(--accent-neon);
+        }
+
+        .cta-button:hover { background-color: white; transform: scale(1.05); box-shadow: 0 0 30px var(--accent-neon); }
+
+        /************************************************************
+        /* 5. SECTION HEADERS AND GENERAL LAYOUT
+        /************************************************************/
+
+        h2 {
+            color: var(--text-light); font-size: 2.5em; text-transform: uppercase;
+            font-weight: 800; margin-bottom: 40px; border-left: 5px solid var(--accent-neon);
+            padding-left: 15px;
+        }
+
+        .grid { display: grid; gap: 25px; }
+        .news-grid { grid-template-columns: 2fr 1fr 1fr; }
+        .match-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); text-align: center; }
+        
+        /* Style for the "Coming Soon" sections */
+        .coming-soon-banner {
+            background-color: #2a2a2a;
+            border: 2px dashed var(--accent-neon);
+            color: var(--accent-neon);
+            padding: 40px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            grid-column: 1 / -1; /* Span across full grid width */
+        }
+
+
+        /************************************************************
+        /* 6. CARD AND COMPONENT STYLES
+        /************************************************************/
+
+        .card {
+            background-color: var(--secondary-dark); padding: 25px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent-neon); }
+        .card h3 { color: var(--accent-neon); font-weight: 600; font-size: 1.2em; }
+        
+        /* Match Card Logo Styling */
+        .match-card h4 { 
+            margin: 0; 
+            display: flex; /* Enables horizontal layout */
+            justify-content: space-around; /* Spreads out logos and separator */
+            align-items: center; 
+            font-size: 1.1em;
+            color: var(--text-light);
+            padding-bottom: 10px;
+        }
+
+        .team-logo {
+            max-width: 45%; /* Limits logo container width */
+            text-align: center;
+        }
+
+        .team-logo img {
+            height: 40px; /* Uniform height for match logos */
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .match-separator {
+            font-weight: bold;
+            color: var(--accent-neon);
+            font-size: 1.5em;
+        }
+
+
+        .match-card strong { font-size: 2em; color: var(--highlight-color); display: block; margin: 10px 0; }
+
+        /* Match Scorers Icon Styling */
+        .scorer-detail {
+            display: block; 
+            color: var(--text-muted);
+            font-size: 1em;
+            margin-top: 5px;
+        }
+        .scorer-icon {
+            color: var(--accent-neon); 
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+
+
+        /* Player List */
+        .player-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+        .player-list li {
+            display: flex; justify-content: space-between; align-items: center; padding: 18px 25px;
+            background-color: var(--secondary-dark); border-radius: 8px; border-left: 5px solid var(--text-muted);
+            transition: background-color 0.3s, border-left-color 0.3s;
+        }
+        .player-list li:hover { background-color: #2a2a2a; border-left-color: var(--accent-neon); }
+        .player-rank { font-size: 2em; font-weight: 900; color: var(--accent-neon); width: 40px; }
+        .player-stat { font-size: 2.2em; color: var(--highlight-color); font-weight: bolder; letter-spacing: 2px; }
+        .player-list li:first-child .player-rank { color: gold; }
+        .player-list li:first-child { border-left-color: gold; }
+        
+        /* Player Name Clickable Styling */
+        .player-list li a {
+            color: inherit; /* Inherit color from li */
+            text-decoration: none; /* Remove underline */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1; /* Make the link fill the space */
+            cursor: pointer;
+        }
+        
+        .player-list li a:hover strong {
+            color: var(--highlight-color); /* Highlight player name on hover */
+        }
+
+
+        /* Team Ranking List FIX */
+        .team-ranking-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px 30px;
+        }
+        
+        .team-ranking-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: var(--secondary-dark);
+            border-radius: 8px;
+            border-left: 5px solid var(--text-muted);
+            cursor: pointer;
+            transition: background-color 0.3s, border-left-color 0.3s, transform 0.2s;
+        }
+        .team-ranking-list li:hover { background-color: #2a2a2a; border-left-color: var(--highlight-color); transform: scale(1.02); }
+        
+        .team-name-points {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically align logo and text */
+            width: 100%;
+            padding-left: 15px;
+        }
+        
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between logo and name */
+        }
+        
+        .ranking-team-logo img {
+            height: 55px; /* **INCREASED SIZE** */
+            width: auto;
+            border-radius: 4px; /* Optional: slight rounding for logos */
+        }
+
+        .rank-number { font-size: 2em; font-weight: 900; width: 40px; text-align: left; color: var(--accent-neon); }
+        .silver-rank { color: silver; }
+        .bronze-rank { color: #cd7f32; }
+        .muted-rank { color: var(--text-muted); }
+
+
+        /************************************************************
+        /* 7. TRANSFER PULSE SECTION (COMPACT BOXES)
+        /************************************************************/
+        .transfer-grid { display: flex; flex-direction: column; gap: 20px; }
+        
+        /* Box size reduction: Reduced padding */
+        .transfer-item {
+            display: flex; align-items: center; background-color: var(--secondary-dark);
+            padding: 15px 20px; 
+            border-radius: 8px; border-left: 5px solid var(--highlight-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Player Name size reduction */
+        .transfer-player { 
+            font-weight: bold; font-size: 1.2em; color: var(--text-light); 
+            min-width: 120px; 
+        }
+        .transfer-details { display: flex; align-items: center; flex-grow: 0; }
+        
+        /* Team Name size reduction */
+        .transfer-team { 
+            font-weight: 600; color: var(--text-muted); 
+            min-width: 60px; 
+            text-align: center; 
+        }
+
+        /* Arrow (fixed from last step) */
+        .transfer-arrow-container {
+            width: 80px; 
+            flex-shrink: 0; 
+            margin: 0 15px; 
+            height: 1px;
+            background: #333; border-radius: 0.5px; position: relative;
+        }
+        .transfer-arrow {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 0.5px;
+            
+            background-color: var(--accent-neon);
+            animation: subtlePulse 2s infinite ease-in-out;
+        }
+        .transfer-arrow::after {
+            content: '>'; position: absolute; right: -8px; 
+            top: -5px; 
+            color: var(--accent-neon); font-size: 1em;
+            font-weight: 900; line-height: 1;
+        }
+
+        /************************************************************
+        /* 8. MODAL (POPUP) STYLES
+        /************************************************************/
+
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); display: none; 
+            justify-content: center; align-items: center; z-index: 200;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .lineup-modal-content {
+            background-color: var(--secondary-dark); border: 3px solid var(--accent-neon);
+            border-radius: 12px; padding: 30px; width: 90%; max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 255, 200, 0.4); animation: modalFadeIn 0.3s ease-out;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute; top: 15px; right: 20px; font-size: 2em;
+            color: var(--text-light); cursor: pointer; transition: color 0.2s, transform 0.2s;
+        }
+        .close-button:hover { color: var(--accent-neon); transform: rotate(90deg); }
+
+        .lineup-modal-content h4 {
+            color: var(--highlight-color); margin-top: 0; font-size: 1.8em;
+            border-bottom: 2px solid var(--secondary-dark); padding-bottom: 10px; margin-bottom: 20px;
+        }
+        .lineup-list { list-style: none; padding: 0; }
+        .lineup-list li {
+            padding: 10px 0; border-bottom: 1px dashed #333; display: flex;
+            justify-content: space-between; font-weight: 500;
+        }
+        .lineup-list li:last-child { border-bottom: none; }
+
+        .top-player-tag {
+            background-color: gold; color: var(--primary-dark); padding: 3px 10px;
+            border-radius: 5px; font-size: 0.8em; font-weight: bold; text-shadow: none; align-self: flex-end;
+        }
+
+        /************************************************************
+        /* 9. FOOTER
+        /************************************************************/
+
+        footer {
+            background-color: var(--primary-dark); color: var(--text-muted);
+            text-align: center; padding: 40px 20px; margin-top: 60px; border-top: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="loading-screen">
+        <img src="egoist_leauge.png" alt="Egoist League Loading Logo">
+    </div>
+
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="egoist_leauge.png" alt="Egoist League Logo">
+            </div>
+            <nav>
+                <a href="#">HOME</a>
+                <a href="#">STANDINGS</a>
+                <a href="#">FIXTURES</a>
+                <a href="#">TEAMS</a>
+                <a href="#">NEWS</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1 style="margin-top: 0;">CLASS FOOTBALL SUPREMACY</h1>
+            <p>Where Every Point is a Claim to Glory.</p>
+            <a href="#" class="cta-button">VIEW LIVE MATCH DATA</a>
+        </div>
+    </div>
+
+    <div class="container main-content">
+
+        <section>
+            <h2>📰 LATEST NEWS</h2>
+            <div class="grid news-grid">
+                <div class="coming-soon-banner">NEWS COMING SOON</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🌟 TOP 5 PLAYERS <span class="text-muted sub-heading">(GOALS SCORED)</span></h2>
+            <ul class="player-list">
+                <li><span class="player-rank">1</span> <a href="#" onclick="showPlayerProfile('profile-player1', 'Sorocean Alexei')"> <span><strong>Sorocean Alexei</strong> - (N/A)</span> <span class="player-stat">N/A</span></a></li>
+                
+                <li><span class="player-rank">2</span> <a href="#" onclick="showPlayerProfile('profile-player2', 'Branzanu Tihon')"> <span><strong>Branzanu Tihon</strong> - (N/A)</span> <span class="player-stat">N/A</span></a></li>
+                
+                <li><span class="player-rank">3</span> <a href="#" onclick="showPlayerProfile('profile-player3', 'Leu Alexandru')"> <span><strong>Leu Alexandru</strong> - (N/A)</span> <span class="player-stat">N/A</span></a></li>
+                
+                <li><span class="player-rank">4</span> <a href="#" onclick="showPlayerProfile('profile-player4', 'Balaban Gabriel')"> <span><strong>Balaban Gabriel</strong> - (N/A)</span> <span class="player-stat">N/A</span></a></li>
+                
+                <li><span class="player-rank">5</span> <a href="#" onclick="showPlayerProfile('profile-player5', 'Volchivski Kiril')"> <span><strong>Volchivski Kiril</strong> - (N/A)</span> <span class="player-stat">N/A</span></a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>⚽ RECENT MATCHES</h2>
+            <div class="grid match-grid">
+                <div class="coming-soon-banner">MATCH RESULTS COMING SOON</div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>🚨 TRANSFER PULSE</h2>
+            <div class="transfer-grid">
+                <div class="coming-soon-banner">TRANSFERS COMING SOON</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🏆 TEAM RANKINGS</h2>
+            <ul class="team-ranking-list">
+                <li onclick="showModal('lineup-teamA', 'SIGMA UNITED Roster')">
+                    <span class="rank-number">1</span>
+                    <div class="team-name-points">
+                        <div class="team-info">
+                            <span class="ranking-team-logo">
+                                <img src="sigma_united.png" alt="Sigma United Logo">
+                            </span>
+                            <strong>SIGMA UNITED</strong>
+                        </div>
+                        <span class="accent-text">0 PTS</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+        
+    </div>
+
+    <footer>
+        <p>EGOIST LEAGUE | Built for Supremacy</p>
+        <p class="text-muted">&copy; 2025</p>
+    </footer>
+
+    <div id="modal-overlay">
+        <div class="lineup-modal-content">
+            <span class="close-button" onclick="hideModal()">&times;</span>
+            <h4 id="modal-title">Details</h4>
+            <ul id="modal-content-list" class="lineup-list">
+                </ul>
+        </div>
+    </div>
+
+
+    <div style="display:none;">
+        
+        <div id="profile-player1">
+            <li class="accent-text" style="font-weight: bold; border-bottom: none;">NAME: Sorocean Alexei</li>
+            <li><strong>Age:</strong> 13</li>
+            <li><strong>Team:</strong> N/A</li>
+            <li><strong>Goals:</strong> N/A</li>
+            <li><strong>Assists:</strong> N/A</li>
+            <li><strong>Pass Accuracy:</strong> N/A</li>
+            <li><strong>Position:</strong> N/A</li>
+        </div>
+        <div id="profile-player2">
+            <li class="accent-text" style="font-weight: bold; border-bottom: none;">NAME: Branzanu Tihon</li>
+            <li><strong>Age:</strong> 13</li>
+            <li><strong>Team:</strong> N/A</li>
+            <li><strong>Goals:</strong> N/A</li>
+            <li><strong>Assists:</strong> N/A</li>
+            <li><strong>Pass Accuracy:</strong> N/A</li>
+            <li><strong>Position:</strong> N/A</li>
+        </div>
+        <div id="profile-player3">
+            <li class="accent-text" style="font-weight: bold; border-bottom: none;">NAME: Leu Alexandru</li>
+            <li><strong>Age:</strong> 13</li>
+            <li><strong>Team:</strong> N/A</li>
+            <li><strong>Goals:</strong> N/A</li>
+            <li><strong>Assists:</strong> N/A</li>
+            <li><strong>Pass Accuracy:</strong> N/A</li>
+            <li><strong>Position:</strong> N/A</li>
+        </div>
+        <div id="profile-player4">
+            <li class="accent-text" style="font-weight: bold; border-bottom: none;">NAME: Balaban Gabriel</li>
+            <li><strong>Age:</strong> 13</li>
+            <li><strong>Team:</strong> N/A</li>
+            <li><strong>Goals:</strong> N/A</li>
+            <li><strong>Assists:</strong> N/A</li>
+            <li><strong>Pass Accuracy:</strong> N/A</li>
+            <li><strong>Position:</strong> N/A</li>
+        </div>
+        <div id="profile-player5">
+            <li class="accent-text" style="font-weight: bold; border-bottom: none;">NAME: Volchivski Kiril</li>
+            <li><strong>Age:</strong> 13</li>
+            <li><strong>Team:</strong> N/A</li>
+            <li><strong>Goals:</strong> N/A</li>
+            <li><strong>Assists:</strong> N/A</li>
+            <li><strong>Pass Accuracy:</strong> N/A</li>
+            <li><strong>Position:</strong> N/A</li>
+        </div>
+
+        <div id="lineup-teamA">
+            <li style="justify-content: center; font-style: italic;"><strong>No players currently registered for Sigma United.</strong></li>
+        </div>
+        
+        <div id="lineup-teamB"></div>
+        <div id="lineup-teamC"></div>
+        <div id="lineup-teamD"></div>
+        <div id="lineup-teamE"></div>
+        <div id="lineup-teamF"></div>
+        <div id="stats-match1"></div>
+        <div id="stats-match2"></div>
+        <div id="stats-match3"></div>
+
+    </div>
+
+
+    <script>
+        // --- LOADING SCREEN LOGIC ---
+        function hideLoader() {
+            const loader = document.getElementById('loading-screen');
+            // Add the slideUpFadeOut class to trigger the transition
+            loader.classList.add('slideUpFadeOut');
+            
+            // Remove the element completely after the transition ends (0.8s)
+            setTimeout(() => {
+                loader.remove();
+            }, 800);
+        }
+
+        // Simulate a 3-second minimum loading time before fading out
+        window.addEventListener('load', () => {
+            setTimeout(hideLoader, 3000); // 3000ms = 3 seconds delay
+        });
+
+        // --- MODAL LOGIC (Existing) ---
+        function showModal(contentId, title) {
+            const contentData = document.getElementById(contentId).innerHTML;
+            
+            // Check if content is empty (for the removed Match Stats/Other Teams)
+            if (!contentData.trim()) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-content-list').innerHTML = `<li style="justify-content: center; font-style: italic; color: var(--text-muted);">Details for this section are not yet available.</li>`;
+            } else {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-content-list').innerHTML = contentData;
+            }
+            
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function showPlayerProfile(profileId, playerName) {
+            showModal(profileId, 'Player Profile: ' + playerName);
+        }
+        
+        function showLineup(lineupId, teamName) {
+            showModal(lineupId, teamName + ' Roster');
+        }
+
+        function showMatchStats(statsId, matchName) {
+            showModal(statsId, 'Match Stats: ' + matchName);
+        }
+
+        function hideModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+
+</body>
+</html>
